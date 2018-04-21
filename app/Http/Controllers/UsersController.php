@@ -20,7 +20,7 @@ class UsersController extends Controller
     {
         $users = User::all();
         
-        return view('users.index', ['users' => $users,]);
+        return view('admin.users.index', ['users' => $users,]);
     }
 
     /**
@@ -54,7 +54,7 @@ class UsersController extends Controller
     {
         $user = User::find($id);
         
-        return view('users.show', [
+        return view('admin.users.show', [
             'user' => $user,
         ]);
     }
@@ -67,7 +67,9 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+
+        return view('admin.users.edit', ['user' => $user]);
     }
 
     /**
@@ -79,7 +81,35 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        if ($request->name !== $user->name){
+            $this->validate($request, [
+                'name' => 'required|max:255',
+                ]);
+            $user->name = $request->name;
+        }
+        if ($request->login_id !== $user->login_id){
+            $this->validate($request, [
+                'login_id' => 'required|max:255|unique:users',
+                ]);
+            $user->login_id = $request->login_id;
+        }
+
+        if ($request->password !== "") {           
+            $this->validate($request, [
+                'password' => 'required|confirmed|min:6',
+            ]);
+            $password = $request->password;
+            $user->password = bcrypt($password);
+        }
+
+        if ($request->department !== $user->department){
+            $user->department = $request->department;
+        }
+        $user->save(); 
+        
+        return redirect()->back();
     }
 
     /**
@@ -90,6 +120,9 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        
+        return redirect()->back();
     }
 }

@@ -19,7 +19,7 @@ class RecruitsController extends Controller
     public function index()
     {
         $recruits = Recruit::all();
-        return view('recruits.index', ['recruits' => $recruits]);
+        return view('admin.recruits.index', ['recruits' => $recruits]);
     }
 
     /**
@@ -29,7 +29,7 @@ class RecruitsController extends Controller
      */
     public function create()
     {
-        return view('recruits.create');
+        return view('admin.recruits.create');
     }
 
     /**
@@ -43,7 +43,7 @@ class RecruitsController extends Controller
         $this->validate($request, [
             'title' => 'required|max:255',
             'type' => 'required|max:255',
-            'main_image' => 'image|max:3000',
+            'main_image' => 'image|max:1000',
         ]);
 
         $recruit = new Recruit;
@@ -55,11 +55,16 @@ class RecruitsController extends Controller
         $recruit->work_hours = $request->work_hours;
         $recruit->work_period = $request->work_period;
         $recruit->welfare = $request->welfare;
-        $imageName = str_shuffle(time().$request->file('main_image')->getClientOriginalName()). '.' . $request->file('main_image')->getClientOriginalExtension();
-        $request->file('main_image')->move(
-            '/public/image/recruits', $imageName
-        );
-        $recruit->main_image = $imageName;
+        if ($request->file('main_image')){
+            $imageName = $request->file('main_image')->getClientOriginalName();
+            if (preg_match("/^[a-zA-Z0-9]+$/", $imageName) === 1) {
+                $imageName = str_shuffle(time().$request->file('main_image')->getClientOriginalName()). '.' . $request->file('main_image')->getClientOriginalExtension();
+                $request->file('main_image')->move(public_path() . '/image/recruits', $imageName);
+                $recruit->main_image = $imageName;
+            } else{
+                return redirect()->back()->withInput()->withErrors(['main_image' => 'ファイル名は半角英数字にしてください']);
+            }
+        }
         $recruit->save();
 
         return redirect()->back();
@@ -86,7 +91,7 @@ class RecruitsController extends Controller
     public function edit($id)
     {
         $recruit = Recruit::find($id);
-        return view('recruits.edit', ['recruit' => $recruit]);
+        return view('admin.recruits.edit', ['recruit' => $recruit]);
     }
 
     /**

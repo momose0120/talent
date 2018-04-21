@@ -20,12 +20,13 @@ class AuthController extends Controller
     | a simple trait to add these behaviors. Why don't you explore it?
     |
     */
-
+    
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     
     // 追加
-    protected $redirectTo = '/';
+    protected $redirectTo = '/admin';
     protected $loginPath = '/login';
+    protected $username = 'login_id';
 
     /**
      * Create a new authentication controller instance.
@@ -34,7 +35,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => ['getLogout', 'getRegister']]);
+        $this->middleware('guest', ['except' => ['getLogout', 'getRegister', 'postRegister']]);
     }
 
     /**
@@ -50,7 +51,6 @@ class AuthController extends Controller
             'login_id' => 'required|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
-        print 'test3';
     }
 
     /**
@@ -67,33 +67,5 @@ class AuthController extends Controller
             'login_id' => $data['login_id'],
             'password' => bcrypt($data['password']),
         ]);
-    }
-    
-    // ファイルアップロード
-    public function upload(Request $request)
-    {
-        $this->validate($request, [
-            'file' => [
-                // アップロードされたファイルであること
-                'file',
-                // 最小縦横120px 最大縦横400px
-                'dimensions:min_width=120,min_height=120,max_width=400,max_height=400',
-            ]
-        ]);
-
-        if ($request->file('file')->isValid([])) {
-            $image = $request->file->store('public/image/admin');
-
-            $user = $request->id;
-            $user->image = basename($filename);
-            $user->save();
-
-            return redirect()->back()->with('success', '保存しました。');
-        } else {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['file' => '不正なデータです。']);
-        }
     }
 }

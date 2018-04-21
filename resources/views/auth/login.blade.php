@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="center jumbotron">
-        <div class="text-center">
-            <h1>Welcome to the Ta! lent</h1>
-        </div>
+    <div class="text-center page-header">
+        <h2>ログイン画面</h2>
     </div>
+
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             

@@ -8,12 +8,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Ta! lent</a>
+                <a class="navbar-brand" href="/admin">Ta! lent</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Signup</a></li>
-                    <li><a href="#">Login</a></li>
+                    @if (Auth::check())
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}さん<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">環境設定</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li>{!! link_to_route('logout.get', 'ログアウト') !!}</li>
+                            </ul>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>

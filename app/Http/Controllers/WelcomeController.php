@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Recruit;
+
 class WelcomeController extends Controller
 {
     /**
@@ -16,11 +18,9 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        // if(\Auth::check()){
-            return view('admintop');   
-        // } else {
-            // return view('auth.login');    
-        // }
+        $requests = Recruit::all();
+        
+        return view('public.top', ['recruits' => $requests]);   
     }
 
     /**
